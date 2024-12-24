@@ -1,14 +1,19 @@
 package com.ksaboor.football.controllers;
 
+import com.ksaboor.football.exceptions.NotFoundException;
 import com.ksaboor.football.models.Player;
 import com.ksaboor.football.services.FootballService;
+import org.apache.coyote.BadRequestException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -16,7 +21,7 @@ import java.util.List;
 @RequestMapping("/players")
 @RestController
 public class PlayerController {
-    private FootballService footballService;
+    private final FootballService footballService;
 
     public PlayerController(FootballService footballService) {
         this.footballService = footballService;
@@ -27,9 +32,9 @@ public class PlayerController {
         return footballService.listPlayers();
     }
 
-    @GetMapping("/{name}")
-    public Player readPlayer(@PathVariable String name) {
-        return footballService.getPlayer(name);
+    @GetMapping("/{id}")
+    public Player readPlayer(@PathVariable String id) {
+        return footballService.getPlayer(id);
     }
 
     @PostMapping
@@ -43,8 +48,21 @@ public class PlayerController {
         footballService.updatePlayer(player);
     }
 
-    @DeleteMapping("/{name}")
+    @DeleteMapping("/{id}")
     public String deletePlayer(@PathVariable String id) {
         return footballService.deletePlayer(id);
+    }
+
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Not Found")
+    @ExceptionHandler(NotFoundException.class)
+    public void notFoundHandler() {
+
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Already exist")
+    @ExceptionHandler(BadRequestException.class)
+    public void alreadyExistsHandler() {
+
     }
 }

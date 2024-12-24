@@ -6,9 +6,9 @@ import com.ksaboor.football.models.Player;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class FootballService {
@@ -18,8 +18,7 @@ public class FootballService {
             ))));
 
     public List<Player> listPlayers() {
-        return players.values().stream()
-                .collect(Collectors.toList());
+        return new ArrayList<>(players.values());
     }
 
     public Player getPlayer(String id) {
